@@ -69,6 +69,8 @@ body{
 .tb-btn.del{border-color:var(--red);color:var(--red)}
 .tb-btn.del:hover{background:var(--red);color:var(--bg)}
 .tb-btn.theme-toggle{min-width:52px}
+.tb-btn.lines-on{border-color:var(--green);color:var(--green)}
+.tb-btn.lines-off{border-color:var(--muted);color:var(--muted);opacity:0.5}
 .tb-btn.theme-toggle:hover{border-color:var(--gold);color:var(--gold)}
 .tb-btn.export-btn{border-color:var(--gold);color:var(--gold)}
 .tb-btn.export-btn:hover{background:var(--gold);color:var(--bg)}
@@ -98,6 +100,12 @@ body{
 .obj-name{flex:1;font-size:14px;color:var(--text);cursor:text}
 .obj-rename-input{flex:1;background:var(--s2);border:1px solid var(--gold);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px;padding:0 4px;outline:none;border-radius:2px;width:0;min-width:0}
 .obj-type{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.obj-link{font-size:13px;cursor:pointer;opacity:0.3;transition:all .1s;padding:0 2px;user-select:none;position:relative}
+.obj-link.grouped{opacity:1}
+.group-menu{position:absolute;right:0;top:100%;background:var(--s1);border:1px solid var(--border2);border-radius:3px;z-index:10;padding:2px 0;min-width:70px;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.group-menu-item{display:flex;align-items:center;gap:6px;padding:3px 10px;cursor:pointer;font-size:12px;color:var(--text);white-space:nowrap}
+.group-menu-item:hover{background:var(--s2)}
+.group-menu-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
 /* RIGHT PANEL */
 #right{
@@ -227,6 +235,9 @@ canvas.view-canvas{display:block;width:100%;height:100%}
   <div class="sep"></div>
   <button class="tb-btn" onclick="openTechniques()">⊹ Techniques</button>
   <button class="tb-btn share-btn" id="share-btn" onclick="copyShareLink()">⇗ Share</button>
+  <div class="sep"></div>
+  <button class="tb-btn" id="lines-btn" onclick="toggleLines()">⌇ Lines</button>
+  <button class="tb-btn lines-off" id="groups-btn" onclick="toggleGroups()">⛓ Groups</button>
   <div class="room-dims">
     <span>Room:</span>
     <input id="rW" type="number" value="600" min="100" max="2000" oninput="updateRoom()"> W
@@ -309,6 +320,9 @@ let objects = [];
 let selectedId = null;
 let idCounter = 0;
 let currentView = 'all';
+let showConnLines = true;
+let groupsEnabled = false;
+let snapGuides = []; // active snap guide lines for rendering
 const viewZoom = { top:1, front:1, side:1, iso:1 };
 const viewPan  = { top:{x:0,y:0}, front:{x:0,y:0}, side:{x:0,y:0}, iso:{x:0,y:0} };
 
@@ -359,11 +373,40 @@ function addObject(type) {
     dirH: 0,   // horizontal aim degrees
     dirV: 0,   // vertical tilt degrees
     gain: 0,
+    group: null,
   };
   objects.push(obj);
   selectObj(id);
   renderAll();
   updateObjList();
+}
+
+const GROUP_COLORS = ['#d4a84b','#4b9fd4','#d44b4b','#4bd4a0','#b44bd4','#d48c4b'];
+const MAX_GROUPS = 6;
+function groupColor(g) { return GROUP_COLORS[(g - 1) % GROUP_COLORS.length]; }
+
+function showGroupMenu(obj, anchorEl) {
+  document.querySelectorAll('.group-menu').forEach(m => m.remove());
+  const menu = document.createElement('div');
+  menu.className = 'group-menu';
+  // "None" option
+  const none = document.createElement('div');
+  none.className = 'group-menu-item';
+  none.innerHTML = `<div class="group-menu-dot" style="background:var(--muted)"></div>${obj.group === null ? '✓ ' : ''}None`;
+  none.onclick = e => { e.stopPropagation(); obj.group = null; menu.remove(); updateObjList(); renderAll(); };
+  menu.appendChild(none);
+  // Group 1–6
+  for (let g = 1; g <= MAX_GROUPS; g++) {
+    const count = objects.filter(o => o.group === g && o.id !== obj.id).length;
+    const item = document.createElement('div');
+    item.className = 'group-menu-item';
+    item.innerHTML = `<div class="group-menu-dot" style="background:${groupColor(g)}"></div>${obj.group === g ? '✓ ' : ''}Group ${g}${count ? ` (${count})` : ''}`;
+    item.onclick = e => { e.stopPropagation(); obj.group = g; menu.remove(); updateObjList(); renderAll(); };
+    menu.appendChild(item);
+  }
+  anchorEl.appendChild(menu);
+  const close = e => { if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', close); } };
+  setTimeout(() => document.addEventListener('click', close), 0);
 }
 
 function deleteSelected() {
@@ -391,11 +434,19 @@ function updateObjList() {
   objects.forEach(obj => {
     const div = document.createElement('div');
     div.className = 'obj-item' + (obj.id === selectedId ? ' selected' : '');
+    const gLabel = obj.group !== null ? obj.group : '';
+    const gCol = obj.group !== null ? groupColor(obj.group) : '';
     div.innerHTML = `
       <div class="obj-dot" style="background:${objColor(obj)}"></div>
       <div class="obj-name" title="Double-click to rename">${obj.name}</div>
+      ${groupsEnabled ? `<div class="obj-link ${obj.group !== null ? 'grouped' : ''}" title="Click to assign group (drag together)" style="${obj.group !== null ? 'color:'+gCol : ''}">⛓${gLabel !== '' ? ' '+gLabel : ''}</div>` : ''}
       <div class="obj-type">${obj.type === 'mic' ? 'MIC' : 'SRC'}</div>`;
     div.onclick = () => selectObj(obj.id);
+    const linkEl = div.querySelector('.obj-link');
+    if (linkEl) linkEl.onclick = e => {
+      e.stopPropagation();
+      showGroupMenu(obj, linkEl);
+    };
     const nameEl = div.querySelector('.obj-name');
     nameEl.ondblclick = e => {
       e.stopPropagation();
@@ -471,15 +522,15 @@ function updateProps() {
     <div class="prop-group">
       <div class="prop-group-title">Orientation</div>
       <div class="prop-row">
-        <div class="prop-label"><span>Horizontal (az.)</span><span>${obj.dirH}°</span></div>
+        <div class="prop-label"><span>Horizontal (az.)</span><span id="dirH-val">${obj.dirH}°</span></div>
         <div class="prop-slider-row">
-          <input type="range" min="-180" max="180" value="${obj.dirH}" oninput="setProp('dirH',+this.value);this.previousElementSibling&&(1);updateProps()">
+          <input type="range" min="-180" max="180" value="${obj.dirH}" oninput="setProp('dirH',+this.value);document.getElementById('dirH-val').textContent=this.value+'°';renderAll()">
         </div>
       </div>
       <div class="prop-row">
-        <div class="prop-label"><span>Vertical (tilt)</span><span>${obj.dirV}°</span></div>
+        <div class="prop-label"><span>Vertical (tilt)</span><span id="dirV-val">${obj.dirV}°</span></div>
         <div class="prop-slider-row">
-          <input type="range" min="-90" max="90" value="${obj.dirV}" oninput="setProp('dirV',+this.value);updateProps()">
+          <input type="range" min="-90" max="90" value="${obj.dirV}" oninput="setProp('dirV',+this.value);document.getElementById('dirV-val').textContent=this.value+'°';renderAll()">
         </div>
       </div>
     </div>
@@ -487,7 +538,7 @@ function updateProps() {
     <div class="prop-group">
       <div class="prop-group-title">Gain (dB)</div>
       <div class="prop-slider-row">
-        <input type="range" min="-20" max="20" value="${obj.gain}" oninput="setProp('gain',+this.value);updateProps()">
+        <input type="range" min="-20" max="20" value="${obj.gain}" oninput="setProp('gain',+this.value);this.nextElementSibling.textContent=this.value+'dB';renderAll()">
         <div class="sval">${obj.gain}dB</div>
       </div>
     </div>
@@ -503,9 +554,9 @@ function updateProps() {
     </div>
   `;
 
-  // Re-attach range labels (dirH dirV) — simpler: use oninput update
+  // Update coordinates display on range change
   el.querySelectorAll('input[type=range]').forEach(inp => {
-    inp.addEventListener('input', () => { updateProps(); renderAll(); });
+    inp.addEventListener('change', () => { updateProps(); });
   });
 }
 
@@ -600,6 +651,7 @@ function loadFromHash() {
     if (!state.r || !state.o) return false;
     room = state.r;
     objects = state.o;
+    objects.forEach(o => { if (o.group === undefined) o.group = null; });
     idCounter = state.c || objects.reduce((m, o) => Math.max(m, o.id), 0);
     document.getElementById('rW').value = room.w;
     document.getElementById('rD').value = room.d;
@@ -688,7 +740,7 @@ function applyTechnique(technique) {
       x: Math.max(0, Math.min(room.w, baseX + m.dx)),
       y: 180,
       z: Math.max(0, Math.min(room.d, baseZ)),
-      dirH: m.dirH, dirV: 0, gain: 0,
+      dirH: m.dirH, dirV: 0, gain: 0, group: null,
     });
   });
   updateObjList(); updateProps(); renderAll();
@@ -721,6 +773,7 @@ function loadPreset(index) {
   if (!p) return;
   room = { ...p.room };
   objects = JSON.parse(JSON.stringify(p.objects));
+  objects.forEach(o => { if (o.linked !== undefined) { delete o.linked; } if (o.group === undefined) o.group = null; });
   idCounter = p.idCounter || objects.reduce((m, o) => Math.max(m, o.id), 0);
   selectedId = null;
   document.getElementById('rW').value = room.w;
@@ -765,6 +818,41 @@ function toggleTheme() {
   root.dataset.theme = isLight ? '' : 'light';
   document.getElementById('theme-btn').textContent = isLight ? '☀ Day' : '☾ Night';
   renderAll();
+}
+
+function toggleLines() {
+  showConnLines = !showConnLines;
+  const btn = document.getElementById('lines-btn');
+  btn.className = 'tb-btn ' + (showConnLines ? 'lines-on' : 'lines-off');
+  renderAll();
+}
+
+function toggleGroups() {
+  groupsEnabled = !groupsEnabled;
+  const btn = document.getElementById('groups-btn');
+  btn.className = 'tb-btn ' + (groupsEnabled ? 'lines-on' : 'lines-off');
+  updateObjList();
+  renderAll();
+}
+
+function snapDrag(viewKey, obj, a, b) {
+  const SNAP_PX = 8;
+  const sc = getViewScale(viewKey);
+  const threshold = SNAP_PX / sc;
+  snapGuides = [];
+  for (const other of objects) {
+    if (other.id === obj.id) continue;
+    const { pa, pb } = objToView(viewKey, other);
+    if (Math.abs(a - pa) < threshold) {
+      a = pa;
+      snapGuides.push({ viewKey, axis: 'a', value: pa });
+    }
+    if (Math.abs(b - pb) < threshold) {
+      b = pb;
+      snapGuides.push({ viewKey, axis: 'b', value: pb });
+    }
+  }
+  return { a, b };
 }
 
 function getColors() {
@@ -831,7 +919,7 @@ function resizeAll() {
 // ── DRAG / PAN / ZOOM ─────────────────────────────────────────────────
 function setupDrag(viewKey) {
   const canvas = panes[viewKey].canvas;
-  let dragging = false, dragId = null, panning = false, panStart = null;
+  let dragging = false, dragId = null, panning = false, panStart = null, dragPrev = null;
 
   canvas.addEventListener('mousedown', e => {
     const r = canvas.getBoundingClientRect();
@@ -841,7 +929,7 @@ function setupDrag(viewKey) {
       const obj = objects[i];
       const { pa, pb } = objToView(viewKey, obj);
       if (Math.hypot(pa - a, pb - b) < 12) {
-        dragging = true; dragId = obj.id; selectObj(obj.id); return;
+        dragging = true; dragId = obj.id; dragPrev = { x: obj.x, y: obj.y, z: obj.z }; selectObj(obj.id); return;
       }
     }
     panning = true;
@@ -854,8 +942,20 @@ function setupDrag(viewKey) {
       if (!obj) return;
       const r = canvas.getBoundingClientRect();
       const sx = e.clientX - r.left, sy = e.clientY - r.top;
-      const { a, b } = screenToView(viewKey, sx, sy);
+      let { a, b } = screenToView(viewKey, sx, sy);
+      ({ a, b } = snapDrag(viewKey, obj, a, b));
+      const oldX = obj.x, oldY = obj.y, oldZ = obj.z;
       applyViewCoords(viewKey, obj, a, b);
+      if (groupsEnabled && obj.group !== null) {
+        const dx = obj.x - oldX, dy = obj.y - oldY, dz = obj.z - oldZ;
+        objects.forEach(o => {
+          if (o.id !== obj.id && o.group === obj.group) {
+            o.x = Math.max(0, Math.min(room.w, o.x + dx));
+            o.y = Math.max(0, Math.min(room.h, o.y + dy));
+            o.z = Math.max(0, Math.min(room.d, o.z + dz));
+          }
+        });
+      }
       updateProps(); renderAll();
     } else if (panning && panStart) {
       viewPan[viewKey].x = panStart.px + (e.clientX - panStart.x);
@@ -864,7 +964,7 @@ function setupDrag(viewKey) {
     }
   });
 
-  const endAll = () => { dragging = false; dragId = null; panning = false; panStart = null; };
+  const endAll = () => { dragging = false; dragId = null; panning = false; panStart = null; snapGuides = []; renderAll(); };
   canvas.addEventListener('mouseup', endAll);
   canvas.addEventListener('mouseleave', endAll);
 
@@ -878,7 +978,7 @@ function setupDrag(viewKey) {
       const obj = objects[i];
       const { pa, pb } = objToView(viewKey, obj);
       if (Math.hypot(pa - a, pb - b) < 18) {
-        dragging = true; dragId = obj.id; selectObj(obj.id); return;
+        dragging = true; dragId = obj.id; dragPrev = { x: obj.x, y: obj.y, z: obj.z }; selectObj(obj.id); return;
       }
     }
     panning = true;
@@ -892,8 +992,20 @@ function setupDrag(viewKey) {
     if (dragging && dragId) {
       const obj = objects.find(o => o.id === dragId);
       if (!obj) return;
-      const { a, b } = screenToView(viewKey, sx, sy);
+      let { a, b } = screenToView(viewKey, sx, sy);
+      ({ a, b } = snapDrag(viewKey, obj, a, b));
+      const oldX = obj.x, oldY = obj.y, oldZ = obj.z;
       applyViewCoords(viewKey, obj, a, b);
+      if (groupsEnabled && obj.group !== null) {
+        const dx = obj.x - oldX, dy = obj.y - oldY, dz = obj.z - oldZ;
+        objects.forEach(o => {
+          if (o.id !== obj.id && o.group === obj.group) {
+            o.x = Math.max(0, Math.min(room.w, o.x + dx));
+            o.y = Math.max(0, Math.min(room.h, o.y + dy));
+            o.z = Math.max(0, Math.min(room.d, o.z + dz));
+          }
+        });
+      }
       updateProps(); renderAll();
     } else if (panning && panStart) {
       viewPan[viewKey].x = panStart.px + (t.clientX - panStart.x);
@@ -910,7 +1022,7 @@ function setupDrag(viewKey) {
     const r = canvas.getBoundingClientRect();
     const mx = e.clientX - r.left, my = e.clientY - r.top;
     const { a, b } = screenToView(viewKey, mx, my);
-    const factor = e.deltaY < 0 ? 1.15 : 1/1.15;
+    const factor = e.deltaY < 0 ? 1.05 : 1/1.05;
     viewZoom[viewKey] = Math.max(0.15, Math.min(15, viewZoom[viewKey] * factor));
     const sc = getViewScale(viewKey);
     const { W, H } = getViewSize(viewKey);
@@ -955,7 +1067,7 @@ function setupIsoPan() {
     const { W, H } = getViewSize('iso');
     const baseSc = Math.min(W, H) / Math.max(room.w, room.d, room.h) * 0.55;
     const oldSc = baseSc * viewZoom.iso;
-    const factor = e.deltaY < 0 ? 1.15 : 1/1.15;
+    const factor = e.deltaY < 0 ? 1.05 : 1/1.05;
     viewZoom.iso = Math.max(0.15, Math.min(15, viewZoom.iso * factor));
     const newSc = baseSc * viewZoom.iso;
     viewPan.iso.x = mx - W/2 - (mx - W/2 - viewPan.iso.x) * (newSc / oldSc);
@@ -1094,6 +1206,7 @@ function drawView2D(viewKey) {
   }
 
   // Connection lines between mics and sources
+  if (showConnLines) {
   const mics = objects.filter(o => o.type === 'mic');
   const sources = objects.filter(o => o.type === 'source');
   mics.forEach(mic => {
@@ -1115,6 +1228,47 @@ function drawView2D(viewKey) {
       ctx.textAlign = 'center';
       ctx.fillText(d3+'cm', (ms.sx+ss.sx)/2, (ms.sy+ss.sy)/2 - 4);
     });
+  });
+  // Mic-to-mic distances
+  for (let i = 0; i < mics.length; i++) {
+    for (let j = i + 1; j < mics.length; j++) {
+      const a = mics[i], b = mics[j];
+      const ap = objToView(viewKey, a), bp = objToView(viewKey, b);
+      const as = worldToScreen(viewKey, ap.pa, ap.pb);
+      const bs = worldToScreen(viewKey, bp.pa, bp.pb);
+      ctx.strokeStyle = '#4b9fd433';
+      ctx.lineWidth = 0.6;
+      ctx.setLineDash([2, 5]);
+      ctx.beginPath(); ctx.moveTo(as.sx, as.sy); ctx.lineTo(bs.sx, bs.sy); ctx.stroke();
+      ctx.setLineDash([]);
+      const dx = a.x-b.x, dy = a.y-b.y, dz = a.z-b.z;
+      const d3 = Math.round(Math.sqrt(dx*dx+dy*dy+dz*dz));
+      ctx.fillStyle = '#4b9fd455';
+      ctx.font = '9px IBM Plex Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(d3+'cm', (as.sx+bs.sx)/2, (as.sy+bs.sy)/2 + 10);
+    }
+  }
+  }
+
+  // Snap guides
+  snapGuides.forEach(g => {
+    if (g.viewKey !== viewKey) return;
+    ctx.save();
+    ctx.strokeStyle = '#d4a84b88';
+    ctx.lineWidth = 0.8;
+    ctx.setLineDash([4, 4]);
+    if (g.axis === 'a') {
+      const s = worldToScreen(viewKey, g.value, 0);
+      const e = worldToScreen(viewKey, g.value, wB);
+      ctx.beginPath(); ctx.moveTo(s.sx, s.sy); ctx.lineTo(e.sx, e.sy); ctx.stroke();
+    } else {
+      const s = worldToScreen(viewKey, 0, g.value);
+      const e = worldToScreen(viewKey, wA, g.value);
+      ctx.beginPath(); ctx.moveTo(s.sx, s.sy); ctx.lineTo(e.sx, e.sy); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.restore();
   });
 
   // Objects
@@ -1264,6 +1418,7 @@ function drawIso() {
   });
 
   // Connection lines
+  if (showConnLines) {
   const mics = objects.filter(o => o.type === 'mic');
   const srcs = objects.filter(o => o.type === 'source');
   mics.forEach(mic => {
@@ -1277,6 +1432,19 @@ function drawIso() {
       ctx.setLineDash([]);
     });
   });
+  // Mic-to-mic distances
+  for (let i = 0; i < mics.length; i++) {
+    for (let j = i + 1; j < mics.length; j++) {
+      const a = mics[i], b = mics[j];
+      const ap = iso(a.x, a.y, a.z), bp = iso(b.x, b.y, b.z);
+      ctx.strokeStyle = '#4b9fd433';
+      ctx.lineWidth = 0.6;
+      ctx.setLineDash([2, 5]);
+      ctx.beginPath(); ctx.moveTo(ap.sx,ap.sy); ctx.lineTo(bp.sx,bp.sy); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+  }
 
   // Objects
   objects.forEach(obj => {
@@ -1338,6 +1506,7 @@ window.addEventListener('resize', resizeAll);
 resizeAll();
 renderPresetList();
 
+document.getElementById('lines-btn').className = 'tb-btn lines-on';
 const _fromHash = loadFromHash();
 if (_fromHash) {
   updateObjList(); updateProps(); renderAll();
