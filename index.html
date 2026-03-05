@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,15 +21,25 @@
   --muted:#4a5260;
   --dim:#282e38;
 }
+:root[data-theme="light"]{
+  --bg:#f4f5f7;
+  --s1:#ecedf0;
+  --s2:#e4e5e8;
+  --border:#d0d3da;
+  --border2:#c0c4cc;
+  --text:#252930;
+  --muted:#7a8090;
+  --dim:#d8dae0;
+}
 body{
   background:var(--bg);
   color:var(--text);
   font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
+  font-size:15px;
   height:100vh;
   display:grid;
   grid-template-columns:220px 1fr 220px;
-  grid-template-rows:40px 1fr;
+  grid-template-rows:46px 1fr;
   grid-template-areas:"topbar topbar topbar" "left views right";
   overflow:hidden;
 }
@@ -44,22 +54,28 @@ body{
   padding:0 14px;
   gap:20px;
 }
-#topbar h1{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:var(--gold);letter-spacing:.12em;text-transform:uppercase}
+#topbar h1{font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:500;color:var(--gold);letter-spacing:.12em;text-transform:uppercase}
 #topbar .sep{width:1px;height:18px;background:var(--border2)}
 .tb-btn{
   background:none;border:1px solid var(--border2);color:var(--muted);
-  font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;
+  font-family:'IBM Plex Mono',monospace;font-size:13px;padding:4px 12px;
   cursor:pointer;border-radius:2px;transition:all .12s;letter-spacing:.06em;
 }
 .tb-btn:hover{border-color:var(--gold);color:var(--gold)}
 .tb-btn.add-mic{border-color:var(--blue);color:var(--blue)}
-.tb-btn.add-mic:hover{background:var(--blue);color:#0a0c0f}
+.tb-btn.add-mic:hover{background:var(--blue);color:var(--bg)}
 .tb-btn.add-src{border-color:var(--green);color:var(--green)}
-.tb-btn.add-src:hover{background:var(--green);color:#0a0c0f}
+.tb-btn.add-src:hover{background:var(--green);color:var(--bg)}
 .tb-btn.del{border-color:var(--red);color:var(--red)}
-.tb-btn.del:hover{background:var(--red);color:#0a0c0f}
-#topbar .room-dims{margin-left:auto;font-size:10px;color:var(--muted);display:flex;gap:8px;align-items:center}
-#topbar .room-dims input{background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10px;width:40px;padding:2px 5px;text-align:center;border-radius:2px;outline:none}
+.tb-btn.del:hover{background:var(--red);color:var(--bg)}
+.tb-btn.theme-toggle{min-width:52px}
+.tb-btn.theme-toggle:hover{border-color:var(--gold);color:var(--gold)}
+.tb-btn.export-btn{border-color:var(--gold);color:var(--gold)}
+.tb-btn.export-btn:hover{background:var(--gold);color:var(--bg)}
+.tb-btn.share-btn{border-color:var(--blue);color:var(--blue)}
+.tb-btn.share-btn:hover{background:var(--blue);color:var(--bg)}
+#topbar .room-dims{margin-left:auto;font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center}
+#topbar .room-dims input{background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;width:58px;padding:2px 6px;text-align:center;border-radius:2px;outline:none}
 #topbar .room-dims input:focus{border-color:var(--gold)}
 
 /* LEFT PANEL */
@@ -70,7 +86,7 @@ body{
   display:flex;flex-direction:column;
   overflow:hidden;
 }
-.panel-title{font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);padding:10px 12px 6px;border-bottom:1px solid var(--border)}
+.panel-title{font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);padding:10px 12px 6px;border-bottom:1px solid var(--border)}
 .obj-list{flex:1;overflow-y:auto;padding:4px 0}
 .obj-item{
   padding:7px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;
@@ -79,8 +95,9 @@ body{
 .obj-item:hover{background:var(--s2)}
 .obj-item.selected{background:var(--dim);border-left-color:var(--gold)}
 .obj-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.obj-name{flex:1;font-size:11px;color:var(--text)}
-.obj-type{font-size:9px;color:var(--muted);letter-spacing:.06em}
+.obj-name{flex:1;font-size:14px;color:var(--text);cursor:text}
+.obj-rename-input{flex:1;background:var(--s2);border:1px solid var(--gold);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px;padding:0 4px;outline:none;border-radius:2px;width:0;min-width:0}
+.obj-type{font-size:12px;color:var(--muted);letter-spacing:.06em}
 
 /* RIGHT PANEL */
 #right{
@@ -92,31 +109,31 @@ body{
 }
 .props-body{padding:12px;flex:1;overflow-y:auto}
 .prop-group{margin-bottom:16px}
-.prop-group-title{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}
+.prop-group-title{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}
 .prop-row{margin-bottom:8px}
-.prop-label{font-size:10px;color:var(--muted);margin-bottom:3px;display:flex;justify-content:space-between}
+.prop-label{font-size:13px;color:var(--muted);margin-bottom:3px;display:flex;justify-content:space-between}
 .prop-label span{color:var(--text)}
 .axis-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
 .axis-input-wrap{display:flex;flex-direction:column;gap:2px}
-.axis-lbl{font-size:9px;text-align:center;padding:2px 0;border-radius:2px 2px 0 0;font-weight:500}
+.axis-lbl{font-size:12px;text-align:center;padding:2px 0;border-radius:2px 2px 0 0;font-weight:500}
 .axis-lbl.x{background:#3a1a1a;color:var(--red)}
 .axis-lbl.y{background:#1a3a2a;color:var(--green)}
 .axis-lbl.z{background:#1a2a3a;color:var(--blue)}
 .axis-val{
   background:var(--s2);border:1px solid var(--border2);
   color:var(--text);font-family:'IBM Plex Mono',monospace;
-  font-size:11px;padding:4px 6px;text-align:center;width:100%;
+  font-size:14px;padding:4px 6px;text-align:center;width:100%;
   border-radius:0 0 2px 2px;outline:none;
 }
 .axis-val:focus{border-color:var(--gold)}
 .prop-slider-row{display:flex;align-items:center;gap:6px}
 .prop-slider-row input[type=range]{flex:1;height:2px;-webkit-appearance:none;background:var(--border2);border-radius:1px;outline:none;cursor:pointer}
 .prop-slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--gold);cursor:pointer}
-.prop-slider-row .sval{font-size:10px;color:var(--text);width:36px;text-align:right}
-.name-input{width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 8px;border-radius:2px;outline:none}
+.prop-slider-row .sval{font-size:13px;color:var(--text);width:40px;text-align:right}
+.name-input{width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px;padding:5px 8px;border-radius:2px;outline:none}
 .name-input:focus{border-color:var(--gold)}
-select.prop-select{width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 8px;border-radius:2px;outline:none;cursor:pointer}
-.empty-props{color:var(--muted);font-size:11px;padding:20px 12px;line-height:1.8}
+select.prop-select{width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px;padding:5px 8px;border-radius:2px;outline:none;cursor:pointer}
+.empty-props{color:var(--muted);font-size:14px;padding:20px 12px;line-height:1.8}
 
 /* VIEWS */
 #views{
@@ -135,15 +152,59 @@ select.prop-select{width:100%;background:var(--s2);border:1px solid var(--border
 }
 .view-label{
   position:absolute;top:8px;left:10px;
-  font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--muted);pointer-events:none;z-index:2;
 }
 .view-axes{
   position:absolute;bottom:8px;right:10px;
-  font-size:9px;color:var(--muted);pointer-events:none;z-index:2;
+  font-size:12px;color:var(--muted);pointer-events:none;z-index:2;
   text-align:right;line-height:1.8;
 }
 canvas.view-canvas{display:block;width:100%;height:100%}
+
+/* VIEW SWITCHER */
+.view-switcher{border-top:1px solid var(--border);flex-shrink:0}
+.view-sw-title{font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);padding:8px 12px 4px}
+.view-sw-btn{
+  display:block;width:100%;text-align:left;
+  background:none;border:none;border-left:2px solid transparent;
+  color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:13px;
+  padding:6px 12px;cursor:pointer;transition:all .1s;letter-spacing:.04em;
+}
+.view-sw-btn:hover{background:var(--s2);color:var(--text)}
+.view-sw-btn.active{border-left-color:var(--gold);color:var(--gold);background:var(--dim)}
+
+/* TECHNIQUES MODAL */
+#tech-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:100;display:none}
+#tech-overlay.open{display:block}
+#tech-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:101;background:var(--s1);border:1px solid var(--border2);width:500px;max-width:92vw;border-radius:3px;display:none}
+#tech-panel.open{display:block}
+.tech-hd{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.tech-hd-title{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--gold)}
+.tech-hd-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.tech-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:0 2px;flex-shrink:0}
+.tech-close:hover{color:var(--text)}
+.tech-grid{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tech-card{background:var(--s2);border:1px solid var(--border);padding:10px 12px;cursor:pointer;transition:all .1s;border-radius:2px}
+.tech-card:hover{border-color:var(--gold);background:var(--dim)}
+.tech-card-name{font-size:13px;color:var(--text);margin-bottom:4px;font-weight:500}
+.tech-card-desc{font-size:11px;color:var(--muted);line-height:1.6}
+.tech-ft{padding:8px 16px 12px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)}
+
+/* PRESETS */
+.preset-section{border-top:1px solid var(--border);flex-shrink:0;max-height:190px;display:flex;flex-direction:column}
+.preset-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px 4px}
+.preset-title{font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted)}
+.preset-save-btn{font-size:11px;padding:2px 8px;background:none;border:1px solid var(--border2);color:var(--muted);font-family:'IBM Plex Mono',monospace;cursor:pointer;border-radius:2px;transition:all .1s;letter-spacing:.04em}
+.preset-save-btn:hover{border-color:var(--gold);color:var(--gold)}
+.preset-list{overflow-y:auto;flex:1}
+.preset-item{display:flex;align-items:center;gap:6px;padding:5px 12px;cursor:pointer;transition:background .1s}
+.preset-item:hover{background:var(--s2)}
+.preset-item-name{flex:1;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preset-item-date{font-size:11px;color:var(--muted);white-space:nowrap}
+.preset-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;opacity:0.5;font-family:inherit}
+.preset-del-btn:hover{color:var(--red);opacity:1}
+.preset-empty{font-size:12px;color:var(--muted);padding:8px 12px;font-style:italic}
 
 /* Scrollbar */
 ::-webkit-scrollbar{width:4px}
@@ -156,21 +217,43 @@ canvas.view-canvas{display:block;width:100%;height:100%}
 <div id="topbar">
   <h1>Room · 3D</h1>
   <div class="sep"></div>
-  <button class="tb-btn add-mic" onclick="addObject('mic')">+ Microfono</button>
-  <button class="tb-btn add-src" onclick="addObject('source')">+ Sorgente</button>
-  <button class="tb-btn del" onclick="deleteSelected()">Elimina</button>
+  <button class="tb-btn add-mic" onclick="addObject('mic')">+ Mic</button>
+  <button class="tb-btn add-src" onclick="addObject('source')">+ Source</button>
+  <button class="tb-btn del" onclick="deleteSelected()">Delete</button>
+  <div class="sep"></div>
+  <button class="tb-btn theme-toggle" id="theme-btn" onclick="toggleTheme()">☀ Day</button>
+  <button class="tb-btn export-btn" onclick="exportPositioning()">↓ Export</button>
+  <button class="tb-btn" onclick="exportPNG()">⎙ PNG</button>
+  <div class="sep"></div>
+  <button class="tb-btn" onclick="openTechniques()">⊹ Techniques</button>
+  <button class="tb-btn share-btn" id="share-btn" onclick="copyShareLink()">⇗ Share</button>
   <div class="room-dims">
-    <span>Stanza:</span>
+    <span>Room:</span>
     <input id="rW" type="number" value="600" min="100" max="2000" oninput="updateRoom()"> W
     <input id="rD" type="number" value="800" min="100" max="2000" oninput="updateRoom()"> D
     <input id="rH" type="number" value="300" min="100" max="600" oninput="updateRoom()"> H
-    <span style="color:var(--muted);font-size:9px">(cm)</span>
+    <span style="color:var(--muted);font-size:11px">(cm)</span>
   </div>
 </div>
 
 <div id="left">
-  <div class="panel-title">Oggetti</div>
+  <div class="panel-title">Objects</div>
   <div class="obj-list" id="obj-list"></div>
+  <div class="view-switcher">
+    <div class="view-sw-title">Views</div>
+    <button class="view-sw-btn active" id="vsw-all"   onclick="setView('all')">⊞  All</button>
+    <button class="view-sw-btn"        id="vsw-top"   onclick="setView('top')">↑  Top</button>
+    <button class="view-sw-btn"        id="vsw-front" onclick="setView('front')">→  Front</button>
+    <button class="view-sw-btn"        id="vsw-side"  onclick="setView('side')">⬝  Side</button>
+    <button class="view-sw-btn"        id="vsw-iso"   onclick="setView('iso')">◈  Isometric</button>
+  </div>
+  <div class="preset-section">
+    <div class="preset-header">
+      <div class="preset-title">Presets</div>
+      <button class="preset-save-btn" onclick="savePreset()">+ Save</button>
+    </div>
+    <div class="preset-list" id="preset-list"></div>
+  </div>
 </div>
 
 <div id="views">
@@ -194,16 +277,29 @@ canvas.view-canvas{display:block;width:100%;height:100%}
   </div>
   <!-- ISO -->
   <div class="view-pane" id="pane-iso">
-    <div class="view-label">Isometrica</div>
+    <div class="view-label">Isometric</div>
     <canvas class="view-canvas" id="cv-iso"></canvas>
   </div>
 </div>
 
 <div id="right">
-  <div class="panel-title">Proprietà</div>
+  <div class="panel-title">Properties</div>
   <div class="props-body" id="props-body">
-    <div class="empty-props">Seleziona un oggetto<br>per modificarlo.</div>
+    <div class="empty-props">Select an object<br>to edit it.</div>
   </div>
+</div>
+
+<div id="tech-overlay" onclick="closeTechniques()"></div>
+<div id="tech-panel">
+  <div class="tech-hd">
+    <div>
+      <div class="tech-hd-title">Stereo Techniques</div>
+      <div class="tech-hd-sub">Adds mics relative to the first source in the scene.</div>
+    </div>
+    <button class="tech-close" onclick="closeTechniques()">×</button>
+  </div>
+  <div class="tech-grid" id="tech-grid"></div>
+  <div class="tech-ft">Positions and angles are standard starting points — adjust in the Properties panel as needed.</div>
 </div>
 
 <script>
@@ -212,8 +308,42 @@ let room = { w: 600, h: 300, d: 800 }; // cm: width(X), height(Y), depth(Z)
 let objects = [];
 let selectedId = null;
 let idCounter = 0;
+let currentView = 'all';
+const viewZoom = { top:1, front:1, side:1, iso:1 };
+const viewPan  = { top:{x:0,y:0}, front:{x:0,y:0}, side:{x:0,y:0}, iso:{x:0,y:0} };
 
 const MIC_PATTERNS = ['cardioid','supercardioid','omni','fig-8','hypercardioid'];
+
+const MIC_DB = [
+  // Neumann
+  { brand:'Neumann', model:'U 87 Ai — Cardioid',  pattern:'cardioid' },
+  { brand:'Neumann', model:'U 87 Ai — Omni',       pattern:'omni' },
+  { brand:'Neumann', model:'U 87 Ai — Figure-8',   pattern:'fig-8' },
+  { brand:'Neumann', model:'U 47 — Cardioid',       pattern:'cardioid' },
+  { brand:'Neumann', model:'U 47 — Omni',           pattern:'omni' },
+  { brand:'Neumann', model:'U 67 — Cardioid',       pattern:'cardioid' },
+  { brand:'Neumann', model:'TLM 102',               pattern:'cardioid' },
+  { brand:'Neumann', model:'TLM 103',               pattern:'cardioid' },
+  { brand:'Neumann', model:'KM 184',                pattern:'cardioid' },
+  { brand:'Neumann', model:'KM 185',                pattern:'hypercardioid' },
+  // Schoeps
+  { brand:'Schoeps', model:'MK 2 — Omni',           pattern:'omni' },
+  { brand:'Schoeps', model:'MK 4 — Cardioid',       pattern:'cardioid' },
+  { brand:'Schoeps', model:'MK 21 — Wide Cardioid', pattern:'cardioid' },
+  { brand:'Schoeps', model:'MK 41 — Supercardioid', pattern:'supercardioid' },
+  { brand:'Schoeps', model:'MK 8 — Figure-8',       pattern:'fig-8' },
+  { brand:'Schoeps', model:'CCM 41 — Supercardioid',pattern:'supercardioid' },
+  // Audio-Technica
+  { brand:'Audio-Technica', model:'AT2020',          pattern:'cardioid' },
+  { brand:'Audio-Technica', model:'AT4040',          pattern:'cardioid' },
+  { brand:'Audio-Technica', model:'AT4050 — Cardioid',pattern:'cardioid' },
+  { brand:'Audio-Technica', model:'AT4050 — Omni',   pattern:'omni' },
+  { brand:'Audio-Technica', model:'AT4050 — Figure-8',pattern:'fig-8' },
+  { brand:'Audio-Technica', model:'AT4080 (ribbon)', pattern:'fig-8' },
+  { brand:'Audio-Technica', model:'AT4041',          pattern:'cardioid' },
+  { brand:'Audio-Technica', model:'ATM450',          pattern:'supercardioid' },
+  { brand:'Audio-Technica', model:'AE5100',          pattern:'cardioid' },
+];
 
 function addObject(type) {
   const id = ++idCounter;
@@ -225,6 +355,7 @@ function addObject(type) {
     y: type === 'mic' ? 180 : 100,
     z: room.d / 2 + (Math.random()-0.5)*100,
     pattern: 'cardioid',
+    model: 'Custom',
     dirH: 0,   // horizontal aim degrees
     dirV: 0,   // vertical tilt degrees
     gain: 0,
@@ -262,9 +393,26 @@ function updateObjList() {
     div.className = 'obj-item' + (obj.id === selectedId ? ' selected' : '');
     div.innerHTML = `
       <div class="obj-dot" style="background:${objColor(obj)}"></div>
-      <div class="obj-name">${obj.name}</div>
+      <div class="obj-name" title="Double-click to rename">${obj.name}</div>
       <div class="obj-type">${obj.type === 'mic' ? 'MIC' : 'SRC'}</div>`;
     div.onclick = () => selectObj(obj.id);
+    const nameEl = div.querySelector('.obj-name');
+    nameEl.ondblclick = e => {
+      e.stopPropagation();
+      selectObj(obj.id);
+      const inp = document.createElement('input');
+      inp.className = 'obj-rename-input';
+      inp.value = obj.name;
+      nameEl.replaceWith(inp);
+      inp.focus(); inp.select();
+      const commit = () => {
+        const v = inp.value.trim();
+        if (v) { obj.name = v; renderAll(); }
+        updateObjList(); updateProps();
+      };
+      inp.onblur = commit;
+      inp.onkeydown = e => { if (e.key === 'Enter') inp.blur(); if (e.key === 'Escape') { inp.value = obj.name; inp.blur(); } };
+    };
     el.appendChild(div);
   });
 }
@@ -277,16 +425,16 @@ function objColor(obj) {
 function updateProps() {
   const el = document.getElementById('props-body');
   const obj = getSelected();
-  if (!obj) { el.innerHTML = '<div class="empty-props">Seleziona un oggetto<br>per modificarlo.</div>'; return; }
+  if (!obj) { el.innerHTML = '<div class="empty-props">Select an object<br>to edit it.</div>'; return; }
 
   el.innerHTML = `
     <div class="prop-group">
-      <div class="prop-group-title">Nome</div>
+      <div class="prop-group-title">Name</div>
       <input class="name-input" value="${obj.name}" oninput="setProp('name', this.value)">
     </div>
 
     <div class="prop-group">
-      <div class="prop-group-title">Posizione (cm)</div>
+      <div class="prop-group-title">Position (cm)</div>
       <div class="axis-inputs">
         <div class="axis-input-wrap">
           <div class="axis-lbl x">X</div>
@@ -305,21 +453,31 @@ function updateProps() {
 
     ${obj.type === 'mic' ? `
     <div class="prop-group">
+      <div class="prop-group-title">Model</div>
+      <select class="prop-select" onchange="setMicModel(this.value)">
+        <option value="Custom" ${obj.model==='Custom'?'selected':''}>— Custom —</option>
+        ${['Neumann','Schoeps','Audio-Technica'].map(brand => `
+          <optgroup label="${brand}">
+            ${MIC_DB.filter(m=>m.brand===brand).map(m=>`<option value="${m.model}" ${obj.model===m.model?'selected':''}>${m.model}</option>`).join('')}
+          </optgroup>`).join('')}
+      </select>
+    </div>
+    <div class="prop-group">
       <div class="prop-group-title">Pattern</div>
-      <select class="prop-select" onchange="setProp('pattern',this.value)">
+      <select class="prop-select" onchange="setProp('pattern',this.value);setProp('model','Custom');updateProps()">
         ${MIC_PATTERNS.map(p => `<option value="${p}" ${obj.pattern===p?'selected':''}>${p}</option>`).join('')}
       </select>
     </div>
     <div class="prop-group">
-      <div class="prop-group-title">Orientamento</div>
+      <div class="prop-group-title">Orientation</div>
       <div class="prop-row">
-        <div class="prop-label"><span>Orizzontale (az.)</span><span>${obj.dirH}°</span></div>
+        <div class="prop-label"><span>Horizontal (az.)</span><span>${obj.dirH}°</span></div>
         <div class="prop-slider-row">
           <input type="range" min="-180" max="180" value="${obj.dirH}" oninput="setProp('dirH',+this.value);this.previousElementSibling&&(1);updateProps()">
         </div>
       </div>
       <div class="prop-row">
-        <div class="prop-label"><span>Verticale (tilt)</span><span>${obj.dirV}°</span></div>
+        <div class="prop-label"><span>Vertical (tilt)</span><span>${obj.dirV}°</span></div>
         <div class="prop-slider-row">
           <input type="range" min="-90" max="90" value="${obj.dirV}" oninput="setProp('dirV',+this.value);updateProps()">
         </div>
@@ -336,8 +494,8 @@ function updateProps() {
     `}
 
     <div class="prop-group" style="margin-top:4px;padding-top:12px;border-top:1px solid var(--border)">
-      <div class="prop-group-title" style="color:var(--muted)">Coordinate</div>
-      <div style="color:var(--muted);font-size:10px;line-height:2">
+      <div class="prop-group-title" style="color:var(--muted)">Coordinates</div>
+      <div style="color:var(--muted);font-size:12px;line-height:2">
         X: <span style="color:var(--red)">${Math.round(obj.x)}</span> cm &nbsp;
         Y: <span style="color:var(--green)">${Math.round(obj.y)}</span> cm &nbsp;
         Z: <span style="color:var(--blue)">${Math.round(obj.z)}</span> cm
@@ -359,6 +517,18 @@ function setProp(key, val) {
   renderAll();
 }
 
+function setMicModel(modelName) {
+  const obj = getSelected();
+  if (!obj) return;
+  obj.model = modelName;
+  if (modelName !== 'Custom') {
+    const entry = MIC_DB.find(m => m.model === modelName);
+    if (entry) obj.pattern = entry.pattern;
+  }
+  updateProps();
+  renderAll();
+}
+
 function setPropClamped(key, val, mn, mx) {
   const obj = getSelected();
   if (!obj) return;
@@ -371,6 +541,267 @@ function updateRoom() {
   room.d = parseInt(document.getElementById('rD').value) || 800;
   room.h = parseInt(document.getElementById('rH').value) || 300;
   renderAll();
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────
+function exportPositioning() {
+  const data = {
+    room: { width: room.w, height: room.h, depth: room.d, unit: 'cm' },
+    objects: objects.map(o => {
+      const base = {
+        name: o.name,
+        type: o.type,
+        position: { x: Math.round(o.x), y: Math.round(o.y), z: Math.round(o.z) },
+      };
+      if (o.type === 'mic') {
+        base.pattern = o.pattern;
+        base.dirH = o.dirH;
+        base.dirV = o.dirV;
+      } else {
+        base.gain = o.gain;
+      }
+      return base;
+    }),
+    exported: new Date().toISOString(),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mic-placement.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ── SHARE LINK ────────────────────────────────────────────────────────
+function getShareURL() {
+  const state = {
+    r: room,
+    o: objects.map(o => ({ id:o.id, type:o.type, name:o.name,
+      x:Math.round(o.x), y:Math.round(o.y), z:Math.round(o.z),
+      pattern:o.pattern, model:o.model, dirH:o.dirH, dirV:o.dirV, gain:o.gain })),
+    c: idCounter,
+  };
+  return location.href.split('#')[0] + '#' + btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+}
+function copyShareLink() {
+  const url = getShareURL();
+  const btn = document.getElementById('share-btn');
+  const orig = btn.textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 2200);
+  }).catch(() => { prompt('Copy this link:', url); });
+}
+function loadFromHash() {
+  const hash = location.hash.slice(1);
+  if (!hash) return false;
+  try {
+    const state = JSON.parse(decodeURIComponent(escape(atob(hash))));
+    if (!state.r || !state.o) return false;
+    room = state.r;
+    objects = state.o;
+    idCounter = state.c || objects.reduce((m, o) => Math.max(m, o.id), 0);
+    document.getElementById('rW').value = room.w;
+    document.getElementById('rD').value = room.d;
+    document.getElementById('rH').value = room.h;
+    return true;
+  } catch { return false; }
+}
+
+// ── PNG EXPORT ─────────────────────────────────────────────────────────
+function exportPNG() {
+  if (currentView !== 'all') {
+    const canvas = panes[currentView].canvas;
+    const a = document.createElement('a');
+    a.download = `mic-placement-${currentView}.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    return;
+  }
+  // Combine 4 canvases into 2×2 grid
+  const keys = ['top','front','side','iso'];
+  const cw = panes.top.canvas.width, ch = panes.top.canvas.height;
+  const gap = 2;
+  const out = document.createElement('canvas');
+  out.width = cw * 2 + gap; out.height = ch * 2 + gap;
+  const ctx = out.getContext('2d');
+  const borderCol = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+  ctx.fillStyle = borderCol || '#1e2228';
+  ctx.fillRect(0, 0, out.width, out.height);
+  keys.forEach((k, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    ctx.drawImage(panes[k].canvas, col * (cw + gap), row * (ch + gap));
+  });
+  const a = document.createElement('a');
+  a.download = 'mic-placement.png';
+  a.href = out.toDataURL('image/png');
+  a.click();
+}
+
+// ── STEREO TECHNIQUES ─────────────────────────────────────────────────
+const TECHNIQUES = [
+  { name: 'XY Coincident',  desc: '2× Cardioid · same position · ±45°',
+    mics: [{ name:'XY-L', pattern:'cardioid', dx:0,    dirH:135  },
+           { name:'XY-R', pattern:'cardioid', dx:0,    dirH:-135 }] },
+  { name: 'ORTF',           desc: '2× Cardioid · 17 cm apart · ±55°',
+    mics: [{ name:'ORTF-L', pattern:'cardioid', dx:-8.5, dirH:125  },
+           { name:'ORTF-R', pattern:'cardioid', dx: 8.5, dirH:-125 }] },
+  { name: 'AB Spaced Pair', desc: '2× Omni · 60 cm apart · parallel',
+    mics: [{ name:'AB-L', pattern:'omni', dx:-30, dirH:180 },
+           { name:'AB-R', pattern:'omni', dx: 30, dirH:180 }] },
+  { name: 'M-S Mid-Side',   desc: 'Cardioid (mid) + Figure-8 (side) · coincident',
+    mics: [{ name:'MS-Mid',  pattern:'cardioid', dx:0, dirH:180 },
+           { name:'MS-Side', pattern:'fig-8',    dx:0, dirH:90  }] },
+  { name: 'Blumlein Pair',  desc: '2× Figure-8 · same position · ±45°',
+    mics: [{ name:'Blum-L', pattern:'fig-8', dx:0, dirH:135  },
+           { name:'Blum-R', pattern:'fig-8', dx:0, dirH:-135 }] },
+  { name: 'Decca Tree',     desc: '3× Omni · centre + 2 m span',
+    mics: [{ name:'Decca-C', pattern:'omni', dx:   0, dirH:180 },
+           { name:'Decca-L', pattern:'omni', dx:-100, dirH:180 },
+           { name:'Decca-R', pattern:'omni', dx: 100, dirH:180 }] },
+];
+function openTechniques() {
+  const grid = document.getElementById('tech-grid');
+  grid.innerHTML = '';
+  TECHNIQUES.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'tech-card';
+    card.innerHTML = `<div class="tech-card-name">${t.name}</div><div class="tech-card-desc">${t.desc}</div>`;
+    card.onclick = () => { applyTechnique(t); closeTechniques(); };
+    grid.appendChild(card);
+  });
+  document.getElementById('tech-overlay').classList.add('open');
+  document.getElementById('tech-panel').classList.add('open');
+}
+function closeTechniques() {
+  document.getElementById('tech-overlay').classList.remove('open');
+  document.getElementById('tech-panel').classList.remove('open');
+}
+function applyTechnique(technique) {
+  const src = objects.find(o => o.type === 'source');
+  const baseX = src ? src.x : room.w / 2;
+  const baseZ = src ? Math.max(50, src.z - 80) : room.d / 2;
+  technique.mics.forEach(m => {
+    const id = ++idCounter;
+    objects.push({
+      id, type:'mic', name:m.name, model:'Custom', pattern:m.pattern,
+      x: Math.max(0, Math.min(room.w, baseX + m.dx)),
+      y: 180,
+      z: Math.max(0, Math.min(room.d, baseZ)),
+      dirH: m.dirH, dirV: 0, gain: 0,
+    });
+  });
+  updateObjList(); updateProps(); renderAll();
+}
+
+// ── PRESETS ───────────────────────────────────────────────────────────
+function getPresets() {
+  try { return JSON.parse(localStorage.getItem('mic-room-presets') || '[]'); } catch { return []; }
+}
+function savePresetsToStorage(presets) {
+  localStorage.setItem('mic-room-presets', JSON.stringify(presets));
+}
+function savePreset() {
+  const name = prompt('Preset name:', `Session ${new Date().toLocaleDateString()}`);
+  if (!name || !name.trim()) return;
+  const presets = getPresets();
+  presets.unshift({
+    name: name.trim(),
+    date: new Date().toISOString(),
+    room: { ...room },
+    objects: JSON.parse(JSON.stringify(objects)),
+    idCounter,
+  });
+  savePresetsToStorage(presets);
+  renderPresetList();
+}
+function loadPreset(index) {
+  const presets = getPresets();
+  const p = presets[index];
+  if (!p) return;
+  room = { ...p.room };
+  objects = JSON.parse(JSON.stringify(p.objects));
+  idCounter = p.idCounter || objects.reduce((m, o) => Math.max(m, o.id), 0);
+  selectedId = null;
+  document.getElementById('rW').value = room.w;
+  document.getElementById('rD').value = room.d;
+  document.getElementById('rH').value = room.h;
+  updateObjList(); updateProps(); renderAll();
+}
+function deletePreset(index) {
+  if (!confirm('Delete this preset?')) return;
+  const presets = getPresets();
+  presets.splice(index, 1);
+  savePresetsToStorage(presets);
+  renderPresetList();
+}
+function renderPresetList() {
+  const el = document.getElementById('preset-list');
+  const presets = getPresets();
+  if (!presets.length) {
+    el.innerHTML = '<div class="preset-empty">No saved presets</div>';
+    return;
+  }
+  el.innerHTML = '';
+  presets.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'preset-item';
+    const d = new Date(p.date);
+    const dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    div.innerHTML = `
+      <div class="preset-item-name" title="${p.name}">${p.name}</div>
+      <div class="preset-item-date">${dateStr}</div>
+      <button class="preset-del-btn" title="Delete">×</button>`;
+    div.querySelector('.preset-item-name').onclick = () => loadPreset(i);
+    div.querySelector('.preset-del-btn').onclick = e => { e.stopPropagation(); deletePreset(i); };
+    el.appendChild(div);
+  });
+}
+
+// ── THEME ─────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const root = document.documentElement;
+  const isLight = root.dataset.theme === 'light';
+  root.dataset.theme = isLight ? '' : 'light';
+  document.getElementById('theme-btn').textContent = isLight ? '☀ Day' : '☾ Night';
+  renderAll();
+}
+
+function getColors() {
+  const light = document.documentElement.dataset.theme === 'light';
+  return light ? {
+    bg:          '#f4f5f7',
+    roomFill:    '#eaedf2',
+    grid:        '#d5dae2',
+    border:      '#4a6070',
+    axisLabel:   '#4a6070',
+    connLine:    '#3a8848',
+    distLabel:   '#2a7035',
+    objStroke:   '#f4f5f7',
+    dotLabel:    '#f4f5f7',
+    isoFloor:    '#e8ecf1',
+    isoBackWall: '#e4e8ed',
+    isoLeftWall: '#e0e4e9',
+    isoGrid:     '#ccd2dc',
+    isoEdges:    '#3a5870',
+    isoConnLine: '#3a8848',
+  } : {
+    bg:          '#0a0c0f',
+    roomFill:    '#0f1218',
+    grid:        '#151a20',
+    border:      '#2a3040',
+    axisLabel:   '#2a3040',
+    connLine:    '#1a2a1a',
+    distLabel:   '#253525',
+    objStroke:   '#0a0c0f',
+    dotLabel:    '#0a0c0f',
+    isoFloor:    '#0f1318',
+    isoBackWall: '#0d1015',
+    isoLeftWall: '#0c0f13',
+    isoGrid:     '#151c25',
+    isoEdges:    '#2a3848',
+    isoConnLine: '#1e3020',
+  };
 }
 
 // ── CANVAS SETUP ──────────────────────────────────────────────────────
@@ -397,45 +828,45 @@ function resizeAll() {
   renderAll();
 }
 
-// ── DRAG ──────────────────────────────────────────────────────────────
-// For each 2D view, map screen coords to world coords on the relevant axes
-const viewDrag = {};
-
-function setupDrag(viewKey, getWorldXY, setWorldXY) {
+// ── DRAG / PAN / ZOOM ─────────────────────────────────────────────────
+function setupDrag(viewKey) {
   const canvas = panes[viewKey].canvas;
-  let dragging = false, dragId = null;
+  let dragging = false, dragId = null, panning = false, panStart = null;
 
   canvas.addEventListener('mousedown', e => {
     const r = canvas.getBoundingClientRect();
     const sx = e.clientX - r.left, sy = e.clientY - r.top;
     const { a, b } = screenToView(viewKey, sx, sy);
-    // hit test
     for (let i = objects.length - 1; i >= 0; i--) {
       const obj = objects[i];
       const { pa, pb } = objToView(viewKey, obj);
       if (Math.hypot(pa - a, pb - b) < 12) {
-        dragging = true; dragId = obj.id;
-        selectObj(obj.id);
-        return;
+        dragging = true; dragId = obj.id; selectObj(obj.id); return;
       }
     }
-    dragging = false; dragId = null;
+    panning = true;
+    panStart = { x: e.clientX, y: e.clientY, px: viewPan[viewKey].x, py: viewPan[viewKey].y };
   });
 
   canvas.addEventListener('mousemove', e => {
-    if (!dragging || dragId === null) return;
-    const obj = objects.find(o => o.id === dragId);
-    if (!obj) return;
-    const r = canvas.getBoundingClientRect();
-    const sx = e.clientX - r.left, sy = e.clientY - r.top;
-    const { a, b } = screenToView(viewKey, sx, sy);
-    applyViewCoords(viewKey, obj, a, b);
-    updateProps();
-    renderAll();
+    if (dragging && dragId !== null) {
+      const obj = objects.find(o => o.id === dragId);
+      if (!obj) return;
+      const r = canvas.getBoundingClientRect();
+      const sx = e.clientX - r.left, sy = e.clientY - r.top;
+      const { a, b } = screenToView(viewKey, sx, sy);
+      applyViewCoords(viewKey, obj, a, b);
+      updateProps(); renderAll();
+    } else if (panning && panStart) {
+      viewPan[viewKey].x = panStart.px + (e.clientX - panStart.x);
+      viewPan[viewKey].y = panStart.py + (e.clientY - panStart.y);
+      renderAll();
+    }
   });
 
-  canvas.addEventListener('mouseup', () => { dragging = false; dragId = null; });
-  canvas.addEventListener('mouseleave', () => { dragging = false; dragId = null; });
+  const endAll = () => { dragging = false; dragId = null; panning = false; panStart = null; };
+  canvas.addEventListener('mouseup', endAll);
+  canvas.addEventListener('mouseleave', endAll);
 
   // Touch
   canvas.addEventListener('touchstart', e => {
@@ -450,21 +881,110 @@ function setupDrag(viewKey, getWorldXY, setWorldXY) {
         dragging = true; dragId = obj.id; selectObj(obj.id); return;
       }
     }
+    panning = true;
+    panStart = { x: t.clientX, y: t.clientY, px: viewPan[viewKey].x, py: viewPan[viewKey].y };
   }, { passive: false });
 
   canvas.addEventListener('touchmove', e => {
     e.preventDefault();
-    if (!dragging || !dragId) return;
-    const obj = objects.find(o => o.id === dragId);
-    if (!obj) return;
     const t = e.touches[0], r = canvas.getBoundingClientRect();
     const sx = t.clientX - r.left, sy = t.clientY - r.top;
-    const { a, b } = screenToView(viewKey, sx, sy);
-    applyViewCoords(viewKey, obj, a, b);
-    updateProps(); renderAll();
+    if (dragging && dragId) {
+      const obj = objects.find(o => o.id === dragId);
+      if (!obj) return;
+      const { a, b } = screenToView(viewKey, sx, sy);
+      applyViewCoords(viewKey, obj, a, b);
+      updateProps(); renderAll();
+    } else if (panning && panStart) {
+      viewPan[viewKey].x = panStart.px + (t.clientX - panStart.x);
+      viewPan[viewKey].y = panStart.py + (t.clientY - panStart.y);
+      renderAll();
+    }
   }, { passive: false });
 
-  canvas.addEventListener('touchend', () => { dragging = false; dragId = null; });
+  canvas.addEventListener('touchend', endAll);
+
+  // Wheel: zoom toward mouse
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    const r = canvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const { a, b } = screenToView(viewKey, mx, my);
+    const factor = e.deltaY < 0 ? 1.15 : 1/1.15;
+    viewZoom[viewKey] = Math.max(0.15, Math.min(15, viewZoom[viewKey] * factor));
+    const sc = getViewScale(viewKey);
+    const { W, H } = getViewSize(viewKey);
+    const { wA, wB } = getViewWorldSize(viewKey);
+    viewPan[viewKey].x = mx - (W - wA*sc)/2 - a*sc;
+    viewPan[viewKey].y = my - (H - wB*sc)/2 - b*sc;
+    renderAll();
+  }, { passive: false });
+
+  // Double-click on empty space: reset zoom/pan
+  canvas.addEventListener('dblclick', e => {
+    const r = canvas.getBoundingClientRect();
+    const { a, b } = screenToView(viewKey, e.clientX - r.left, e.clientY - r.top);
+    for (const obj of objects) {
+      const { pa, pb } = objToView(viewKey, obj);
+      if (Math.hypot(pa - a, pb - b) < 14) return;
+    }
+    viewZoom[viewKey] = 1; viewPan[viewKey] = { x:0, y:0 }; renderAll();
+  });
+}
+
+function setupIsoPan() {
+  const canvas = panes.iso.canvas;
+  let panning = false, panStart = null;
+  canvas.addEventListener('mousedown', e => {
+    panning = true;
+    panStart = { x: e.clientX, y: e.clientY, px: viewPan.iso.x, py: viewPan.iso.y };
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (!panning || !panStart) return;
+    viewPan.iso.x = panStart.px + (e.clientX - panStart.x);
+    viewPan.iso.y = panStart.py + (e.clientY - panStart.y);
+    renderAll();
+  });
+  const endPan = () => { panning = false; panStart = null; };
+  canvas.addEventListener('mouseup', endPan);
+  canvas.addEventListener('mouseleave', endPan);
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    const r = canvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const { W, H } = getViewSize('iso');
+    const baseSc = Math.min(W, H) / Math.max(room.w, room.d, room.h) * 0.55;
+    const oldSc = baseSc * viewZoom.iso;
+    const factor = e.deltaY < 0 ? 1.15 : 1/1.15;
+    viewZoom.iso = Math.max(0.15, Math.min(15, viewZoom.iso * factor));
+    const newSc = baseSc * viewZoom.iso;
+    viewPan.iso.x = mx - W/2 - (mx - W/2 - viewPan.iso.x) * (newSc / oldSc);
+    viewPan.iso.y = my - H*0.62 - (my - H*0.62 - viewPan.iso.y) * (newSc / oldSc);
+    renderAll();
+  }, { passive: false });
+  canvas.addEventListener('dblclick', () => {
+    viewZoom.iso = 1; viewPan.iso = { x:0, y:0 }; renderAll();
+  });
+}
+
+function setView(v) {
+  currentView = v;
+  const viewsEl = document.getElementById('views');
+  const paneMap = { top:'pane-top', front:'pane-front', side:'pane-side', iso:'pane-iso' };
+  if (v === 'all') {
+    viewsEl.style.gridTemplateColumns = '1fr 1fr';
+    viewsEl.style.gridTemplateRows = '1fr 1fr';
+    Object.values(paneMap).forEach(id => document.getElementById(id).style.display = '');
+  } else {
+    viewsEl.style.gridTemplateColumns = '1fr';
+    viewsEl.style.gridTemplateRows = '1fr';
+    Object.entries(paneMap).forEach(([key, id]) => {
+      document.getElementById(id).style.display = key === v ? '' : 'none';
+    });
+  }
+  document.querySelectorAll('.view-sw-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('vsw-' + v).classList.add('active');
+  resizeAll();
 }
 
 // View projection helpers
@@ -484,14 +1004,15 @@ function getViewScale(viewKey) {
   const { W, H } = getViewSize(viewKey);
   const { wA, wB } = getViewWorldSize(viewKey);
   const pad = 32;
-  return Math.min((W - pad*2) / wA, (H - pad*2) / wB);
+  return Math.min((W - pad*2) / wA, (H - pad*2) / wB) * viewZoom[viewKey];
 }
 
 function worldToScreen(viewKey, a, b) {
   const { W, H } = getViewSize(viewKey);
   const { wA, wB } = getViewWorldSize(viewKey);
   const sc = getViewScale(viewKey);
-  const ox = (W - wA * sc) / 2, oy = (H - wB * sc) / 2;
+  const pan = viewPan[viewKey];
+  const ox = (W - wA*sc)/2 + pan.x, oy = (H - wB*sc)/2 + pan.y;
   return { sx: ox + a * sc, sy: oy + b * sc };
 }
 
@@ -499,7 +1020,8 @@ function screenToView(viewKey, sx, sy) {
   const { W, H } = getViewSize(viewKey);
   const { wA, wB } = getViewWorldSize(viewKey);
   const sc = getViewScale(viewKey);
-  const ox = (W - wA * sc) / 2, oy = (H - wB * sc) / 2;
+  const pan = viewPan[viewKey];
+  const ox = (W - wA*sc)/2 + pan.x, oy = (H - wB*sc)/2 + pan.y;
   return { a: (sx - ox) / sc, b: (sy - oy) / sc };
 }
 
@@ -518,6 +1040,7 @@ function applyViewCoords(viewKey, obj, a, b) {
 }
 
 ['top','front','side'].forEach(k => setupDrag(k));
+setupIsoPan();
 
 // ── RENDERING ─────────────────────────────────────────────────────────
 const GRID_CM = 100;
@@ -527,20 +1050,22 @@ function drawView2D(viewKey) {
   const { W, H } = getViewSize(viewKey);
   const { wA, wB } = getViewWorldSize(viewKey);
   const sc = getViewScale(viewKey);
-  const ox = (W - wA * sc) / 2, oy = (H - wB * sc) / 2;
+  const pan = viewPan[viewKey];
+  const ox = (W - wA*sc)/2 + pan.x, oy = (H - wB*sc)/2 + pan.y;
 
+  const C = getColors();
   ctx.clearRect(0, 0, W, H);
 
   // BG
-  ctx.fillStyle = '#0a0c0f';
+  ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H);
 
   // Room fill
-  ctx.fillStyle = '#0f1218';
+  ctx.fillStyle = C.roomFill;
   ctx.fillRect(ox, oy, wA*sc, wB*sc);
 
   // Grid
-  ctx.strokeStyle = '#151a20';
+  ctx.strokeStyle = C.grid;
   ctx.lineWidth = 0.5;
   for (let a = 0; a <= wA; a += GRID_CM) {
     ctx.beginPath(); ctx.moveTo(ox + a*sc, oy); ctx.lineTo(ox + a*sc, oy + wB*sc); ctx.stroke();
@@ -550,20 +1075,22 @@ function drawView2D(viewKey) {
   }
 
   // Room border
-  ctx.strokeStyle = '#2a3040';
+  ctx.strokeStyle = C.border;
   ctx.lineWidth = 1.5;
   ctx.strokeRect(ox, oy, wA*sc, wB*sc);
 
   // Axis labels (every 100cm)
-  ctx.fillStyle = '#2a3040';
-  ctx.font = `8px IBM Plex Mono, monospace`;
+  ctx.fillStyle = C.axisLabel;
+  ctx.font = `10px IBM Plex Mono, monospace`;
   ctx.textAlign = 'center';
   for (let a = 0; a <= wA; a += GRID_CM) {
-    ctx.fillText(a, ox + a*sc, oy + wB*sc + 10);
+    ctx.fillText(a, ox + a*sc, oy + wB*sc + 12);
   }
   ctx.textAlign = 'right';
+  const invertB = (viewKey === 'front' || viewKey === 'side');
   for (let b = 0; b <= wB; b += GRID_CM) {
-    ctx.fillText(b, ox - 4, oy + b*sc + 3);
+    const label = invertB ? (wB - b) : b;
+    ctx.fillText(label, ox - 4, oy + b*sc + 3);
   }
 
   // Connection lines between mics and sources
@@ -575,7 +1102,7 @@ function drawView2D(viewKey) {
       const sp = objToView(viewKey, src);
       const ms = worldToScreen(viewKey, mp.pa, mp.pb);
       const ss = worldToScreen(viewKey, sp.pa, sp.pb);
-      ctx.strokeStyle = '#1a2a1a';
+      ctx.strokeStyle = C.connLine;
       ctx.lineWidth = 0.8;
       ctx.setLineDash([3, 6]);
       ctx.beginPath(); ctx.moveTo(ms.sx, ms.sy); ctx.lineTo(ss.sx, ss.sy); ctx.stroke();
@@ -583,8 +1110,8 @@ function drawView2D(viewKey) {
       // distance label
       const dx = mic.x-src.x, dy = mic.y-src.y, dz = mic.z-src.z;
       const d3 = Math.round(Math.sqrt(dx*dx+dy*dy+dz*dz));
-      ctx.fillStyle = '#253525';
-      ctx.font = '8px IBM Plex Mono, monospace';
+      ctx.fillStyle = C.distLabel;
+      ctx.font = '10px IBM Plex Mono, monospace';
       ctx.textAlign = 'center';
       ctx.fillText(d3+'cm', (ms.sx+ss.sx)/2, (ms.sy+ss.sy)/2 - 4);
     });
@@ -628,20 +1155,20 @@ function drawView2D(viewKey) {
     ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI*2);
     ctx.fillStyle = sel ? col : col + 'cc';
     ctx.fill();
-    ctx.strokeStyle = '#0a0c0f'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = C.objStroke; ctx.lineWidth = 1.5; ctx.stroke();
 
     // label
-    ctx.fillStyle = '#0a0c0f';
-    ctx.font = `bold ${Math.max(6, 7)}px IBM Plex Mono, monospace`;
+    ctx.fillStyle = C.dotLabel;
+    ctx.font = `bold 9px IBM Plex Mono, monospace`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(obj.type === 'mic' ? 'M' : 'S', sx, sy + 0.5);
     ctx.textBaseline = 'alphabetic';
 
     // name
     ctx.fillStyle = sel ? col : col + '99';
-    ctx.font = `9px IBM Plex Mono, monospace`;
+    ctx.font = `11px IBM Plex Mono, monospace`;
     ctx.textAlign = 'center';
-    ctx.fillText(obj.name, sx, sy - r - 4);
+    ctx.fillText(obj.name, sx, sy - r - 5);
   });
 }
 
@@ -675,18 +1202,20 @@ function drawPolar2D(ctx, cx, cy, angleDeg, pattern, color, size) {
 function drawIso() {
   const ctx = ctxs.iso;
   const { W, H } = getViewSize('iso');
+  const C = getColors();
   ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = '#0a0c0f';
+  ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H);
 
   const ang = Math.PI / 6; // 30°
-  const sc = Math.min(W, H) / Math.max(room.w, room.d, room.h) * 0.55;
+  const sc = Math.min(W, H) / Math.max(room.w, room.d, room.h) * 0.55 * viewZoom.iso;
+  const panIso = viewPan.iso;
 
   function iso(x, y, z) {
     // x=right, y=up, z=depth
     const px = (x - z) * Math.cos(ang) * sc;
     const py = -(y * sc) + (x + z) * Math.sin(ang) * sc;
-    return { sx: W/2 + px, sy: H * 0.62 + py };
+    return { sx: W/2 + panIso.x + px, sy: H * 0.62 + panIso.y + py };
   }
 
   const rw = room.w, rh = room.h, rd = room.d;
@@ -710,12 +1239,12 @@ function drawIso() {
     ctx.fillStyle = col; ctx.fill();
   }
 
-  fillFace([[0,0,0],[rw,0,0],[rw,0,rd],[0,0,rd]], '#0f1318'); // floor
-  fillFace([[0,0,0],[rw,0,0],[rw,rh,0],[0,rh,0]], '#0d1015'); // back wall
-  fillFace([[0,0,0],[0,0,rd],[0,rh,rd],[0,rh,0]], '#0c0f13'); // left wall
+  fillFace([[0,0,0],[rw,0,0],[rw,0,rd],[0,0,rd]], C.isoFloor);    // floor
+  fillFace([[0,0,0],[rw,0,0],[rw,rh,0],[0,rh,0]], C.isoBackWall); // back wall
+  fillFace([[0,0,0],[0,0,rd],[0,rh,rd],[0,rh,0]], C.isoLeftWall); // left wall
 
   // Grid on floor
-  ctx.strokeStyle = '#151c25';
+  ctx.strokeStyle = C.isoGrid;
   ctx.lineWidth = 0.5;
   for (let gx = 0; gx <= rw; gx += GRID_CM) {
     const a = iso(gx,0,0), b = iso(gx,0,rd);
@@ -727,7 +1256,7 @@ function drawIso() {
   }
 
   // Edges
-  ctx.strokeStyle = '#2a3848';
+  ctx.strokeStyle = C.isoEdges;
   ctx.lineWidth = 1;
   edges.forEach(([a,b]) => {
     const ca = iso(...corners[a]), cb = iso(...corners[b]);
@@ -741,7 +1270,7 @@ function drawIso() {
     srcs.forEach(src => {
       const mp = iso(mic.x, mic.y, mic.z);
       const sp = iso(src.x, src.y, src.z);
-      ctx.strokeStyle = '#1e3020';
+      ctx.strokeStyle = C.isoConnLine;
       ctx.lineWidth = 0.8;
       ctx.setLineDash([3,7]);
       ctx.beginPath(); ctx.moveTo(mp.sx,mp.sy); ctx.lineTo(sp.sx,sp.sy); ctx.stroke();
@@ -773,23 +1302,23 @@ function drawIso() {
     ctx.beginPath(); ctx.arc(p.sx, p.sy, sel ? 7 : 5.5, 0, Math.PI*2);
     ctx.fillStyle = sel ? col : col + 'cc';
     ctx.fill();
-    ctx.strokeStyle = '#0a0c0f'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = C.objStroke; ctx.lineWidth = 1.5; ctx.stroke();
 
-    ctx.fillStyle = '#0a0c0f';
-    ctx.font = 'bold 7px IBM Plex Mono, monospace';
+    ctx.fillStyle = C.dotLabel;
+    ctx.font = 'bold 9px IBM Plex Mono, monospace';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(obj.type === 'mic' ? 'M' : 'S', p.sx, p.sy + 0.5);
     ctx.textBaseline = 'alphabetic';
 
     ctx.fillStyle = sel ? col : col + '99';
-    ctx.font = '8px IBM Plex Mono, monospace';
+    ctx.font = '10px IBM Plex Mono, monospace';
     ctx.textAlign = 'center';
-    ctx.fillText(obj.name, p.sx, p.sy - 11);
+    ctx.fillText(obj.name, p.sx, p.sy - 13);
   });
 
   // Axis labels
   ctx.fillStyle = '#c84b4b99';
-  ctx.font = '9px IBM Plex Mono, monospace';
+  ctx.font = '11px IBM Plex Mono, monospace';
   const ax = iso(rw+20, 0, 0); ctx.fillText('X', ax.sx, ax.sy);
   ctx.fillStyle = '#4bd4a099';
   const ay = iso(0, rh+20, 0); ctx.fillText('Y', ay.sx, ay.sy);
@@ -807,21 +1336,27 @@ function renderAll() {
 // ── INIT ──────────────────────────────────────────────────────────────
 window.addEventListener('resize', resizeAll);
 resizeAll();
+renderPresetList();
 
-// Add defaults
-addObject('source');
-setTimeout(() => {
-  const src = objects[0];
-  src.x = room.w / 2; src.y = 100; src.z = room.d * 0.3;
-  addObject('mic');
-  const mic = objects[1];
-  mic.x = room.w / 2 - 20; mic.y = 180; mic.z = room.d * 0.6;
-  addObject('mic');
-  const mic2 = objects[2];
-  mic2.x = room.w / 2 + 20; mic2.y = 180; mic2.z = room.d * 0.6;
-  selectObj(mic.id);
-  renderAll();
-}, 50);
+const _fromHash = loadFromHash();
+if (_fromHash) {
+  updateObjList(); updateProps(); renderAll();
+} else {
+  // Add defaults
+  addObject('source');
+  setTimeout(() => {
+    const src = objects[0];
+    src.x = room.w / 2; src.y = 100; src.z = room.d * 0.3;
+    addObject('mic');
+    const mic = objects[1];
+    mic.x = room.w / 2 - 20; mic.y = 180; mic.z = room.d * 0.6;
+    addObject('mic');
+    const mic2 = objects[2];
+    mic2.x = room.w / 2 + 20; mic2.y = 180; mic2.z = room.d * 0.6;
+    selectObj(mic.id);
+    renderAll();
+  }, 50);
+}
 </script>
 </body>
 </html>
