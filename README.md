@@ -19,7 +19,7 @@ Built as a single HTML file, no dependencies, no build step.
 
 Open `index.html` in any modern browser. No server required.
 
-Or visit the live version: **[your-username.github.io/mic-room-3d](https://your-username.github.io/mic-room-3d)**
+Or visit the live version: **[parallelmusic.github.io/mic-room-3d](https://parallelmusic.github.io/mic-room-3d)**
 
 ## Keyboard & Mouse
 
